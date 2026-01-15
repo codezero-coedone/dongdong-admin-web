@@ -1,3 +1,5 @@
+# dongdong-admin-web
+
 ## DongDong Admin Web (Backoffice)
 
 ### 목적
@@ -30,4 +32,3 @@ npm run dev
 
 - v0.1은 빠른 관제 목적이라 access token을 localStorage에 보관한다.
 - 운영 전환 시에는 **HttpOnly cookie 기반 세션**으로 변경 권장.
-
