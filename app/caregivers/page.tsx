@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/shared/api/adminClient';
 import { getAccessToken, setAccessToken } from '@/shared/auth/tokenStore';
+import { normalizeListResponse } from '@/shared/api/listResponse';
+import { AdminShell } from '@/shared/ui/AdminShell';
 
 type CaregiverRow = {
   id: number;
@@ -41,8 +43,9 @@ export default function CaregiversPage() {
           params: { q: query || undefined, page: 1, limit: 50 },
         });
         if (!alive) return;
-        setRows(Array.isArray(res.data?.items) ? res.data.items : []);
-        setTotal(typeof res.data?.total === 'number' ? res.data.total : null);
+        const { items, total } = normalizeListResponse<CaregiverRow>(res.data);
+        setRows(items);
+        setTotal(total);
       } catch (e: any) {
         if (!alive) return;
         if (e?.response?.status === 401) {
@@ -59,29 +62,18 @@ export default function CaregiversPage() {
   }, [router, query]);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <div className="text-xl font-semibold">간병인</div>
-          <div className="mt-1 text-sm text-gray-600">
-            total: {total === null ? '—' : total}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            className="w-72 rounded-md border bg-white px-3 py-2 text-sm"
-            placeholder="이름/전화 검색"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/dashboard')}
-          >
-            대시보드
-          </button>
-        </div>
-      </div>
+    <AdminShell
+      title="간병인"
+      subtitle={`total: ${total === null ? '—' : total}`}
+      right={
+        <input
+          className="w-72 rounded-md border bg-white px-3 py-2 text-sm"
+          placeholder="이름/전화 검색"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      }
+    >
 
       {err ? (
         <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -89,7 +81,7 @@ export default function CaregiversPage() {
         </div>
       ) : null}
 
-      <div className="mt-4 overflow-auto rounded-lg border bg-white">
+      <div className="mt-4 overflow-auto rounded-lg border bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
@@ -137,7 +129,7 @@ export default function CaregiversPage() {
           </tbody>
         </table>
       </div>
-    </main>
+    </AdminShell>
   );
 }
 

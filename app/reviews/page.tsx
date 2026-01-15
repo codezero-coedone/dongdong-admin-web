@@ -7,22 +7,11 @@ import { getAccessToken, setAccessToken } from '@/shared/auth/tokenStore';
 import { normalizeListResponse } from '@/shared/api/listResponse';
 import { AdminShell } from '@/shared/ui/AdminShell';
 
-type MatchRow = {
-  id: number;
-  status: string;
-  requestId: string | null;
-  caregiverId: number | null;
-  caregiverName: string | null;
-  patientId: string | null;
-  patientName: string | null;
-  createdAt: string;
-  acceptedAt: string | null;
-  completedAt: string | null;
-};
+type Row = any;
 
-export default function MatchesPage() {
+export default function ReviewsPage() {
   const router = useRouter();
-  const [rows, setRows] = useState<MatchRow[]>([]);
+  const [rows, setRows] = useState<Row[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -36,11 +25,11 @@ export default function MatchesPage() {
     (async () => {
       setErr(null);
       try {
-        const res = await adminApi.get('/admin/matches', {
+        const res = await adminApi.get('/admin/reviews', {
           params: { page: 1, limit: 50 },
         });
         if (!alive) return;
-        const { items, total } = normalizeListResponse<MatchRow>(res.data);
+        const { items, total } = normalizeListResponse<Row>(res.data);
         setRows(items);
         setTotal(total);
       } catch (e: any) {
@@ -59,8 +48,7 @@ export default function MatchesPage() {
   }, [router]);
 
   return (
-    <AdminShell title="매칭" subtitle={`total: ${total === null ? '—' : total}`}>
-
+    <AdminShell title="리뷰" subtitle={`total: ${total === null ? '—' : total}`}>
       {err ? (
         <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {err}
@@ -72,40 +60,25 @@ export default function MatchesPage() {
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
               <th className="px-3 py-2">ID</th>
-              <th className="px-3 py-2">status</th>
-              <th className="px-3 py-2">requestId</th>
-              <th className="px-3 py-2">caregiver</th>
-              <th className="px-3 py-2">patient</th>
+              <th className="px-3 py-2">rating</th>
+              <th className="px-3 py-2">caregiverId</th>
+              <th className="px-3 py-2">matchId</th>
               <th className="px-3 py-2">created</th>
-              <th className="px-3 py-2" />
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
-              <tr key={r.id} className="border-t">
-                <td className="px-3 py-2">{r.id}</td>
-                <td className="px-3 py-2">{r.status}</td>
-                <td className="px-3 py-2">{r.requestId || '—'}</td>
-                <td className="px-3 py-2">
-                  {r.caregiverName ? `${r.caregiverName} (#${r.caregiverId})` : '—'}
-                </td>
-                <td className="px-3 py-2">
-                  {r.patientName ? `${r.patientName} (${r.patientId})` : '—'}
-                </td>
-                <td className="px-3 py-2">{String(r.createdAt).slice(0, 10)}</td>
-                <td className="px-3 py-2">
-                  <button
-                    className="rounded-md border bg-white px-2 py-1 text-xs"
-                    onClick={() => router.push(`/matches/${r.id}`)}
-                  >
-                    상세
-                  </button>
-                </td>
+            {rows.map((r: any) => (
+              <tr key={String(r.id)} className="border-t">
+                <td className="px-3 py-2">{String(r.id ?? '—')}</td>
+                <td className="px-3 py-2">{String(r.rating ?? '—')}</td>
+                <td className="px-3 py-2">{String(r.caregiverId ?? r.caregiver_id ?? '—')}</td>
+                <td className="px-3 py-2">{String(r.matchId ?? r.match_id ?? '—')}</td>
+                <td className="px-3 py-2">{String(r.createdAt ?? r.created_at ?? '—').slice(0, 10)}</td>
               </tr>
             ))}
             {rows.length === 0 ? (
               <tr>
-                <td className="px-3 py-10 text-center text-gray-500" colSpan={7}>
+                <td className="px-3 py-10 text-center text-gray-500" colSpan={5}>
                   데이터 없음
                 </td>
               </tr>

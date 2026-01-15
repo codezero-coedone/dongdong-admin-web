@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/shared/api/adminClient';
 import { getAccessToken, setAccessToken } from '@/shared/auth/tokenStore';
+import { AdminShell } from '@/shared/ui/AdminShell';
 
 export default function AdminPasswordPage() {
   const router = useRouter();
@@ -43,20 +44,10 @@ export default function AdminPasswordPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <div className="flex items-center justify-between">
-        <div className="text-xl font-semibold">비밀번호 변경</div>
-        <button
-          className="rounded-md border bg-white px-3 py-2 text-sm"
-          onClick={() => router.push('/dashboard')}
-        >
-          대시보드
-        </button>
-      </div>
-
+    <AdminShell title="비밀번호 변경" subtitle="ADMIN 계정 비밀번호 변경">
       <form
         onSubmit={onSubmit}
-        className="mt-6 w-full max-w-md rounded-lg border bg-white p-6 shadow-sm"
+        className="w-full max-w-md rounded-lg border bg-white p-6 shadow-sm"
       >
         <label className="block">
           <div className="text-sm text-gray-700">현재 비밀번호</div>
@@ -102,7 +93,7 @@ export default function AdminPasswordPage() {
           {loading ? '변경 중…' : '변경'}
         </button>
       </form>
-    </main>
+    </AdminShell>
   );
 }
 

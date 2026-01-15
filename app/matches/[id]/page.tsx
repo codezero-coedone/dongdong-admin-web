@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { adminApi } from '@/shared/api/adminClient';
 import { getAccessToken, setAccessToken } from '@/shared/auth/tokenStore';
+import { AdminShell } from '@/shared/ui/AdminShell';
 
 export default function MatchDetailPage() {
   const router = useRouter();
@@ -42,24 +43,18 @@ export default function MatchDetailPage() {
   }, [router, id]);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <div className="flex items-center justify-between">
-        <div className="text-xl font-semibold">매칭 상세</div>
-        <div className="flex gap-2">
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/matches')}
-          >
-            목록
-          </button>
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/dashboard')}
-          >
-            대시보드
-          </button>
-        </div>
-      </div>
+    <AdminShell
+      title="매칭 상세"
+      subtitle={`matchId: ${id || '—'}`}
+      right={
+        <button
+          className="rounded-md border bg-white px-3 py-2 text-sm hover:bg-gray-50"
+          onClick={() => router.push('/matches')}
+        >
+          목록
+        </button>
+      }
+    >
 
       {err ? (
         <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -79,7 +74,7 @@ export default function MatchDetailPage() {
       ) : (
         <div className="mt-6 text-sm text-gray-600">로딩 중…</div>
       )}
-    </main>
+    </AdminShell>
   );
 }
 

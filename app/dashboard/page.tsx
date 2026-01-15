@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/shared/api/adminClient';
 import { getAccessToken, setAccessToken } from '@/shared/auth/tokenStore';
+import { AdminShell } from '@/shared/ui/AdminShell';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -49,50 +50,10 @@ export default function DashboardPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-xl font-semibold">대시보드</div>
-          <div className="mt-1 text-sm text-gray-600">
-            디자인보다 “한 눈에 데이터/상태”가 보이게.
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/users')}
-          >
-            사용자
-          </button>
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/caregivers')}
-          >
-            간병인
-          </button>
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/matches')}
-          >
-            매칭
-          </button>
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => router.push('/settings/password')}
-          >
-            비번 변경
-          </button>
-          <button
-            className="rounded-md border bg-white px-3 py-2 text-sm"
-            onClick={() => {
-              setAccessToken(null);
-              router.replace('/login');
-            }}
-          >
-            로그아웃
-          </button>
-        </div>
-      </div>
+    <AdminShell
+      title="대시보드"
+      subtitle="디자인보다 “한 눈에 데이터/상태”가 보이게."
+    >
 
       {err ? (
         <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -106,7 +67,7 @@ export default function DashboardPage() {
         <StatCard title="간병요청" value={stats?.careRequests} />
         <StatCard title="매칭" value={stats?.matches} />
       </div>
-    </main>
+    </AdminShell>
   );
 }
 
